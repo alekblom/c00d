@@ -1,0 +1,88 @@
+[Unit]
+Description=c00d IDE PTY terminal server (WebSocket)
+Documentation=https://github.com/alekblom/c00d/blob/main/SECURITY.md
+After=network.target
+
+# ---------------------------------------------------------------------------
+# Hardened systemd unit for c00d's optional PTY terminal server.
+#
+# See SECURITY.md for the full rationale. Short version: this unit runs the
+# Node.js PTY process as a dedicated low-privilege user that can only touch
+# the project directory, with the rest of the filesystem made read-only at
+# the kernel level via ProtectSystem / ProtectHome.
+#
+# Prerequisites (do these once before enabling the service):
+#
+#   # 1. Create a dedicated system user
+#   sudo useradd --system --create-home --home-dir /home/c00d-term \
+#                --shell /sbin/nologin c00d-term
+#
+#   # 2. Grant it access to your project via POSIX ACLs (don't chown)
+#   sudo setfacl -R -m u:c00d-term:rwX /path/to/your/project
+#   sudo setfacl -R -d -m u:c00d-term:rwX /path/to/your/project
+#
+#   # 3. Edit the two CHANGE ME paths below
+#   sudo $EDITOR /etc/systemd/system/c00d-terminal.service
+#
+#   # 4. Enable + start
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now c00d-terminal
+# ---------------------------------------------------------------------------
+
+[Service]
+Type=simple
+User=c00d-term
+Group=c00d-term
+
+# CHANGE ME: absolute path to your project directory. The PTY will open its
+# shell here, and this is the only place under /home the service can write.
+WorkingDirectory=/path/to/your/project
+
+# CHANGE ME: absolute path to c00d's terminal/server.js. Usually somewhere
+# like /home/youruser/c00d/terminal/server.js — does NOT have to be inside
+# the project directory above.
+ExecStart=/usr/bin/node /path/to/c00d/terminal/server.js
+
+Restart=on-failure
+RestartSec=5s
+
+# --- Environment -----------------------------------------------------------
+# Keep the env minimal — the PTY inherits this.
+Environment=TERMINAL_PORT=3456
+# Full scheme+host, comma-separated for multiple. See SECURITY.md note on
+# substring matching — use a full URL, not a bare domain.
+Environment=ALLOWED_ORIGINS=https://c00d.example.com
+Environment=HOME=/home/c00d-term
+Environment=NODE_ENV=production
+
+# --- systemd sandbox (defense in depth) ------------------------------------
+# These make the rest of the filesystem invisible / read-only even if the
+# PTY process is compromised and the attacker tries to break out.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+
+# CHANGE ME: must match WorkingDirectory above. The service's own home is
+# also writable so node can use its cache.
+ReadWritePaths=/path/to/your/project /home/c00d-term
+
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+
+# --- Resource limits -------------------------------------------------------
+LimitNOFILE=4096
+MemoryMax=512M
+TasksMax=256
+
+# --- Logging ---------------------------------------------------------------
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=c00d-terminal
+
+[Install]
+WantedBy=multi-user.target

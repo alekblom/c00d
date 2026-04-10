@@ -10,10 +10,10 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/c00d-ide/c00d/internal/auth"
-	"github.com/c00d-ide/c00d/internal/config"
-	"github.com/c00d-ide/c00d/internal/db"
-	"github.com/c00d-ide/c00d/internal/handlers"
+	"github.com/alekblom/c00d/internal/auth"
+	"github.com/alekblom/c00d/internal/config"
+	"github.com/alekblom/c00d/internal/db"
+	"github.com/alekblom/c00d/internal/handlers"
 )
 
 //go:embed frontend/*

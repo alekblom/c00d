@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/c00d-ide/c00d/internal/config"
-	"github.com/c00d-ide/c00d/internal/db"
+	"github.com/alekblom/c00d/internal/config"
+	"github.com/alekblom/c00d/internal/db"
 )
 
 // IPLogs handles requests to view IP logs

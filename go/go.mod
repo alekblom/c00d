@@ -1,4 +1,4 @@
-module github.com/c00d-ide/c00d
+module github.com/alekblom/c00d
 
 go 1.21
 

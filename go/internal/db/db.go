@@ -7,7 +7,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/c00d-ide/c00d/internal/config"
+	"github.com/alekblom/c00d/internal/config"
 )
 
 // DB is the global database connection

@@ -220,23 +220,34 @@ pm2 save
 pm2 startup
 ```
 
-**Using systemd:**
-```ini
-[Unit]
-Description=c00d Terminal Server
-After=network.target
+**Using systemd (recommended for production):**
 
-[Service]
-Type=simple
-User=www-data
-WorkingDirectory=/path/to/c00d/terminal
-ExecStart=/usr/bin/node server.js
-Restart=on-failure
-Environment=TERMINAL_PORT=3456
+A ready-to-use, hardened unit file is shipped in
+[`contrib/c00d-terminal.service`](contrib/c00d-terminal.service). It runs the
+PTY as a dedicated low-privilege user, confines it to your project directory
+with POSIX ACLs, and uses systemd's `ProtectSystem=strict` +
+`ProtectHome=read-only` to make the rest of the filesystem untouchable even
+if the process is compromised.
 
-[Install]
-WantedBy=multi-user.target
+```bash
+# 1. Create a dedicated system user
+sudo useradd --system --create-home --home-dir /home/c00d-term \
+             --shell /sbin/nologin c00d-term
+
+# 2. Grant it access to your project only (don't chown — use ACLs)
+sudo setfacl -R -m u:c00d-term:rwX /path/to/your/project
+sudo setfacl -R -d -m u:c00d-term:rwX /path/to/your/project
+
+# 3. Install and start the service (edit paths inside first)
+sudo cp contrib/c00d-terminal.service /etc/systemd/system/
+sudo $EDITOR /etc/systemd/system/c00d-terminal.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now c00d-terminal
 ```
+
+**Do not** run the PTY as `www-data` or your web user — the PTY spawns a real
+`bash` and inherits that user's full filesystem access, including every other
+site they own. See [SECURITY.md](SECURITY.md) for the full privilege model.
 
 ### Configuration
 
@@ -254,6 +265,10 @@ In `config.local.php`:
 - **Restrict IPs** if possible via `allowed_ips`
 - **Protect data folder** - `.htaccess` included, but verify
 - Don't expose on public internet without authentication
+- **If you enable the PTY terminal, read [SECURITY.md](SECURITY.md)** — it
+  documents the privilege model (the PTY is a real shell as whatever user
+  runs `node server.js`, and it is NOT confined by `base_path`) and shows
+  how to isolate it with a dedicated user + systemd hardening.
 
 ### Session Handling
 
@@ -315,9 +330,11 @@ The code is open source. The "c00d" name and logo are trademarks.
 ## Links
 
 - **Website:** [c00d.com](https://c00d.com)
+- **Docs:** [c00d.com/docs](https://c00d.com/docs)
+- **Security:** [SECURITY.md](SECURITY.md) — read this before enabling the PTY
 - **Pro License:** [c00d.com/pro](https://c00d.com/pro)
-- **GitHub:** [github.com/c00d-ide/c00d](https://github.com/c00d-ide/c00d)
-- **Issues:** [github.com/c00d-ide/c00d/issues](https://github.com/c00d-ide/c00d/issues)
+- **GitHub:** [github.com/alekblom/c00d](https://github.com/alekblom/c00d)
+- **Issues:** [github.com/alekblom/c00d/issues](https://github.com/alekblom/c00d/issues)
 
 ---
 

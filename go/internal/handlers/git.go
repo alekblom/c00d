@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/c00d-ide/c00d/internal/config"
+	"github.com/alekblom/c00d/internal/config"
 )
 
 // Git handles git operations

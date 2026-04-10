@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/c00d-ide/c00d/internal/config"
+	"github.com/alekblom/c00d/internal/config"
 )
 
 // ValidatePath checks if a path is within the allowed base path

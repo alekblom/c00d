@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/c00d-ide/c00d/internal/ai"
-	"github.com/c00d-ide/c00d/internal/config"
-	"github.com/c00d-ide/c00d/internal/db"
+	"github.com/alekblom/c00d/internal/ai"
+	"github.com/alekblom/c00d/internal/config"
+	"github.com/alekblom/c00d/internal/db"
 )
 
 // AI handles AI chat requests

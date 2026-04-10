@@ -30,7 +30,7 @@ chmod +x c00d
 ### Build From Source
 
 ```bash
-git clone https://github.com/c00d-ide/c00d.git
+git clone https://github.com/alekblom/c00d.git
 cd c00d
 go build -o c00d
 ```
@@ -254,5 +254,5 @@ MIT License - use it however you want.
 ## Links
 
 - Website: [c00d.com](https://c00d.com)
-- GitHub: [github.com/c00d-ide/c00d](https://github.com/c00d-ide/c00d)
+- GitHub: [github.com/alekblom/c00d](https://github.com/alekblom/c00d)
 - Pro: [c00d.com/pro](https://c00d.com/pro)

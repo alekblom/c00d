@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/c00d-ide/c00d/internal/config"
+	"github.com/alekblom/c00d/internal/config"
 )
 
 // Files handles directory listing requests

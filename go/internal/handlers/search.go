@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/c00d-ide/c00d/internal/config"
+	"github.com/alekblom/c00d/internal/config"
 )
 
 // Search handles file content search requests
